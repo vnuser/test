@@ -1,3 +1,4 @@
+% Class tạo đối tượng figure
 classdef class_figures < handle
     properties
         % Tạo các thuộc tính của cửa sổ hiển thị
