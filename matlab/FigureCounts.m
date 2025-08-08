@@ -1,3 +1,4 @@
+% Chương trình đếm số lượng cửa sổ được tạo ra
 function count = FigureCounts(action)
     persistent objCount;
     if isempty(objCount)
