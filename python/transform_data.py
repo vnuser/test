@@ -1,3 +1,4 @@
+# các thư viện cần thiết để thiết lập kết nối
 import asyncio
 import websockets
 import serial
