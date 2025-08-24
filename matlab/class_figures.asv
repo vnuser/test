@@ -18,24 +18,24 @@ classdef class_figures < handle
     methods
         function obj = class_figures(figureTitle)            %Contructor để khởi tạo cửa sổ đồ thị
             obj.Figure = figure;
-            set(obj.Figure,'Name', 'Window','NumberTitle','off');
+            if nargin > 0 
+                set(obj.Figure,'Name', figureTitle,'NumberTitle','off');
+            else
+                set(obj.Figure,'Name', 'window' + num2str(obj.Count) ,'NumberTitle','off');
+            end
             set(obj.Figure, 'CloseRequestFcn', @(src, event)close(obj));
             %Khởi tạo trục và đồ thị
             obj.Axes = gca;
             obj.Plot = plot(obj.Axes,NaN,NaN);
             xlabel(obj.Axes,'Thời gian');
             ylabel(obj.Axes,'Giá trị');
-            if nargin > 0 
-                title(obj.Axes,figureTitle);
-            else
-                title(obj.Axes,'Dữ liệu thời gian thực')
-            end
-            
+            title(obj.Axes,'Dữ liệu thời gian thực');
             grid(obj.Axes,'on');
             FigureCounts('plus');
         end
 
         function updateData(obj, newX, newY)
+      
             if newX > 20
                 % Dịch chuyển dữ liệu cũ sang trái
                 obj.XData(1:end-1) = obj.XData(2:end);
