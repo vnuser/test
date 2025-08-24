@@ -68,7 +68,7 @@ classdef class_figures < handle
                 % Điều chỉnh giới hạn Trục Y
                 currentYData = obj.YData(obj.YData~=0);
                 if ~isempty(currentYData)
-                    ylim(obj.Axes,[min(obj.YData)-30, max(obj.YData)+30]);
+                    ylim(obj.Axes,[min(obj.YData)-2, max(obj.YData)+2]);
                 end
                 drawnow limitrate;
             end

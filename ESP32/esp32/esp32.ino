@@ -7,17 +7,20 @@
 #include <Adafruit_Sensor.h>
 #include <ArduinoJson.h>
 
-IPAddress local_IP(192, 168, 1, 200);   // Địa chỉ IP tĩnh bạn muốn
+
+IPAddress local_IP(192, 168, 100,200);   // Địa chỉ IP tĩnh bạn muốn
 IPAddress gateway(192, 168, 1, 1);      // Địa chỉ IP của router
 IPAddress subnet(255, 255, 255, 0);     // Subnet mask
 IPAddress primaryDNS(8, 8, 8, 8);       // DNS server (Google)
+float roll;
+const float pi = 3.14159;
 
 Adafruit_MPU6050 mpu;
 
 uint32_t i = 0;
-const char* ssid = "Minh Triet";
-const char* password = "17111977";
-float z;
+const char* ssid = "Pneumatic_Room";
+const char* password = "Mechatronic_lab@A302";
+float x,y,z;
 
 String website = "<!DOCTYPE html>\
   <html>\
@@ -56,17 +59,17 @@ char temp[5];
 
 WebServer server(80);
 WebSocketsServer webSocket = WebSocketsServer(81);
-unsigned long x;
 
 
 
 void setup() {
   // put your setup code here, to run once:
   // Cấu hình mạng địa chỉ IP của esp32
+  
   if (!WiFi.config(local_IP, gateway, subnet, primaryDNS)) {
     Serial.println("Lỗi cấu hình IP tĩnh");
   }
-
+  
   Serial.begin(115200);
   // setup MPU6050
   while (!Serial)
@@ -174,29 +177,33 @@ void loop() {
   // get new sensor events with the reading
   sensors_event_t a, g, t;
   mpu.getEvent( &a, &g, &t);
+  x = a.acceleration.x;
+  y = a.acceleration.y;
   z = a.acceleration.z;
+  float s = sqrt(z*z + y*y);
+  roll = 90 - atan2(-x,s)*180/pi;
   Serial.println("Dữ liệu từ MPU6050");
-  Serial.println(z);
+  Serial.println(roll);
   delay(100);
   server.handleClient();                              // Needed for the webserver to handle all clients
   webSocket.loop();                                   // Update function for the webSockets 
 
    // Yêu cầu 6 byte từ slave
-   
+   /*
   uint8_t bytesReceived = Wire.requestFrom(I2C_DEV_ADDR,7);
   if ((bool)bytesReceived){
     Wire.readBytes(temp,bytesReceived);
     display(temp,bytesReceived);
   }
-  
+  */
 
   unsigned long now = millis();                       // read out the current "time" ("millis()" gives the time in ms since the Arduino started)
   if ((unsigned long)(now - previousMillis) >= interval) { // check if "interval" ms has passed since last time the clients were updated
     String jsonString = "";                           // create a JSON string for sending data to the client
     StaticJsonDocument<200> doc;                      // create a JSON container
     JsonObject object = doc.to<JsonObject>();         // create a JSON Object
-    object["v1"] = temp;                    // write data into the JSON object -> I used "rand1" and "rand2" here, but you can use anything else
-    object["v2"] = (String) z;
+    object["v1"] = 1;                    // write data into the JSON object -> I used "rand1" and "rand2" here, but you can use anything else
+    object["v2"] = roll;
     serializeJson(doc, jsonString);                   // convert JSON object to string
     Serial.println(jsonString);                       // print JSON string to console for debug purposes (you can comment this out)
     webSocket.broadcastTXT(jsonString);               // send JSON string to clients
