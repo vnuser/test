@@ -12,8 +12,8 @@
 #define ENR 22
 #define ENL 24
 #define SS 26 //cảm biến hồng ngoại
-float distance1, distance2, distance3, distance4; // tương ứng với vị trí gần cuối bánh đai bên trái, gần động cơ, gần cảm biến hồng ngoại, cuối bánh đai bên phải
-byte trigPin1 = 8, echoPin1 = 9, trigPin2 = 10, echoPin2 = 11, trigPin3 = 4, echoPin3 = 5, trigPin4 = 35, echoPin4 = 36;
+float distance1, distance2, distance3, distance4, distance5, distance6; // tương ứng với vị trí gần cuối bánh đai bên trái, gần động cơ, gần cảm biến hồng ngoại, cuối bánh đai bên phải
+byte trigPin1 = 8, echoPin1 = 9, trigPin2 = 10, echoPin2 = 11, trigPin3 = 4, echoPin3 = 5, trigPin4 = 35, echoPin4 = 36, trigPin5 = 44, echoPin5 = 42, trigPin6 = 48, echoPin6 = 50;
 volatile int enValue;
 bool infrared_ss;
 // tạo biến string lưu giá trị tất cả các dữ liệu
@@ -23,14 +23,20 @@ void setup() {
   Wire.begin(10);
   Wire.onRequest(requestEvent);
   Serial.begin(115200);
+  pinMode(46,OUTPUT);
+  digitalWrite(46,1);
   pinMode(trigPin1,OUTPUT);
   pinMode(trigPin2,OUTPUT);
   pinMode(trigPin3,OUTPUT);
   pinMode(trigPin4,OUTPUT);
+  pinMode(trigPin5,OUTPUT);
+  pinMode(trigPin6,OUTPUT);
   pinMode(echoPin1,INPUT);
   pinMode(echoPin2,INPUT);
   pinMode(echoPin3,INPUT);
-  pinMode(echoPin3,INPUT);
+  pinMode(echoPin4,INPUT);
+  pinMode(echoPin5,INPUT);
+  pinMode(echoPin6,INPUT);
   pinMode(encoderA, INPUT_PULLUP);
   pinMode(encoderB, INPUT_PULLUP);
   pinMode(PWMR,OUTPUT);
@@ -53,8 +59,11 @@ void loop() {
   distance2 = readUltraSonic(trigPin2, echoPin2);
   distance3 = readUltraSonic(trigPin3, echoPin3);
   distance4 = readUltraSonic(trigPin4, echoPin4);
+  distance5 = readUltraSonic(trigPin5, echoPin5);
+  distance6 = readUltraSonic(trigPin6, echoPin6);
+  Serial.println(distance6);
   Datastring = createJsonString(distance2, enValue);
-  Serial.println(Datastring);
+  //Serial.println(Datastring);
   controlCylynder();
   waiting(100);
 }
