@@ -160,7 +160,7 @@ void loop() {
   y = a.acceleration.y;
   z = a.acceleration.z;
   float s = sqrt(y*y + z*z);
-  roll = atan2(-x,s)*180/pi;
+  roll = atan2(-x,s)*180/pi; // giá trị góc nghiêng xe
   waiting(50);
   // đọc dữ liệu từ MPU6050 2
   sensors_event_t a2, g2, t2;
@@ -169,7 +169,7 @@ void loop() {
   y2 = a2.acceleration.y;
   z2 = a2.acceleration.z;
   float s2 = sqrt(x2*x2 + z2*z2);
-  roll2 = 90 - atan2(y2,s2)*180/pi;
+  roll2 = 90 - atan2(s,z2)*180/pi; // giá trị góc nghiêng ghế
   //Serial.println("Dữ liệu từ MPU6050 1");
   //Serial.println(roll);
   //Serial.println("Dữ liệu từ MPU6050 2");
@@ -197,9 +197,10 @@ void loop() {
   waiting(50);
 
   DeserializationError error2 = deserializeJson(doc1, dataFromAdruino1);
+
   // gửi dữ liệu đọc được từ mpu2 cho arduino cân bằng ghế
   Wire.beginTransmission(15);
-  Wire.println(roll);
+  Wire.println(roll2);
   uint8_t error = Wire.endTransmission(true);
   //Serial.println("endTransmission: %u\n");
   waiting(50);
@@ -210,11 +211,11 @@ void loop() {
     //String jsonString = "";                           // create a JSON string for sending data to the client
     //StaticJsonDocument<200> doc;                      // create a JSON container
     //JsonObject object = doc.to<JsonObject>();         // create a JSON Object
-    object["v1"] = roll;                    // write data into the JSON object -> I used "rand1" and "rand2" here, but you can use anything else
-    object["v2"] = roll2;
+    object["v1"] = roll;                    // giá trị góc nghiêng xe
+    object["v2"] = roll2;                   // giá trị góc nghiêng ghế
     object["v3"] = doc1["distance2"];       // giá trị đo từ cảm biến siêu âm nằm dưới động cơ
     object["v4"] = doc1["encoder"];         // giá trị encoder từ xy lanh cân bằng xe
-    object["v5"] = dataEncoder;
+    object["v5"] = dataEncoder;             // giá trị encoder cân bằng ghế
     serializeJson(doc, jsonString);                   // convert JSON object to string
     Serial.println(jsonString);                       // print JSON string to console for debug purposes (you can comment this out)
     webSocket.broadcastTXT(jsonString);               // send JSON string to clients

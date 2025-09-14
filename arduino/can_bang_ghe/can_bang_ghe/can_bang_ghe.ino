@@ -9,7 +9,10 @@
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
+#include <string.h>
 const float pi = 3.14;
+float currentPoint;
+float error;
 float roll, Acc_x, Acc_y, Acc_z, s;
 float volatile encodervalue;
 float rotate_angle;
@@ -40,6 +43,7 @@ void setup(void) {
 }
 
 void loop() {
+  
   /* Get new sensor events with the readings */
   if (digitalRead(mode_button)==0){
     if (digitalRead(DOWN)==0 && digitalRead(UP)==1){
@@ -55,10 +59,27 @@ void loop() {
       analogWrite(PWML,0);
     }
   }
+  else{
+    currentPoint = mpu.toFloat();
+    error = 0.0 - currentPoint;
+    Serial.println(error);
+    if (error >= 2){
+      analogWrite(PWMR,0);
+      analogWrite(PWML,255);
+    }
+    else if (error <= -2){
+      analogWrite(PWMR,255);
+      analogWrite(PWML,0);
+    }
+    else{
+      analogWrite(PWMR,0);
+      analogWrite(PWML,0);
+    }
+  }
   rotate_angle = encodervalue*360/100;
   /* Print out the values */
-  Serial.print("giá trị góc nghiêng: ");
-  Serial.println(mpu);
+  //Serial.print("giá trị góc nghiêng: ");
+  //Serial.println(mpu);
   waiting(100);
 }
 
@@ -78,12 +99,14 @@ void waiting (long time){
 }
 
 void receiveEvent(int howMany){
-  while (1 < Wire.available()) { // loop through all but the last
+  mpu = "";
+  while (0 < Wire.available()) { // loop through all but the last
     char c = Wire.read(); // receive byte as a character
     Serial.print(c);         // print the character
+    mpu = mpu+c;
   }
-  int x = Wire.read();    // receive byte as an integer
-  Serial.println(x);         // print the integer
+  //int x = Wire.read();    // receive byte as an integer
+  //Serial.println(x);         // print the integer
 }
 
 void requestEvent(){
