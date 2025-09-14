@@ -1,42 +1,33 @@
-// This example code is in the Public Domain (or CC0 licensed, at your option.)
-// By Evandro Copercini - 2018
-//
-// This example creates a bridge between Serial and Classical Bluetooth (SPP)
-// and also demonstrate that SerialBT have the same functionalities of a normal Serial
-// Note: Pairing is authenticated automatically by this device
-
 #include "BluetoothSerial.h"
 
-String device_name = "ESP32-BT-Slave2";
-char c;
-// Check if Bluetooth is available
-#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
-#error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
-#endif
-
-// Check Serial Port Profile
-#if !defined(CONFIG_BT_SPP_ENABLED)
-#error Serial Port Profile for Bluetooth is not available or not enabled. It is only available for the ESP32 chip.
-#endif
-
+// Khai báo một đối tượng BluetoothSerial
 BluetoothSerial SerialBT;
 
 void setup() {
-  Serial.begin(115200);
   pinMode(12,OUTPUT);
   pinMode(13,OUTPUT);
   pinMode(14,OUTPUT);
   pinMode(27,OUTPUT);
   digitalWrite(27,0);
-  SerialBT.begin(device_name);  //Bluetooth device name
-  //SerialBT.deleteAllBondedDevices(); // Uncomment this to delete paired devices; Must be called after begin
-  Serial.printf("The device with name \"%s\" is started.\nNow you can pair it with Bluetooth!\n", device_name.c_str());
+  // Khởi tạo Serial Monitor để theo dõi dữ liệu
+  Serial.begin(115200);
+  Serial.println("Chuan bi khoi dong Bluetooth...");
+
+  // Khởi động Bluetooth với một tên cụ thể
+  // Tên này sẽ xuất hiện trên thiết bị của bạn khi tìm kiếm
+  SerialBT.begin("ESP32_Bluetooth2");
+  Serial.println("Da khoi dong Bluetooth. San sang ket noi!");
 }
+
 void loop() {
-if (!SerialBT.isClosed() && SerialBT.connected()){
-    if (Serial.available()) {
-      SerialBT.write(Serial.read());
-    }
+  // Kiểm tra xem có dữ liệu nào đến từ Bluetooth không
+  if (SerialBT.available()) {
+    // Đọc một byte dữ liệu
+    char c = SerialBT.read();
+
+    // In dữ liệu đã nhận được ra Serial Monitor
+    Serial.print("Da nhan du lieu: ");
+    Serial.println(c);
     if (SerialBT.available()) {
       c = SerialBT.read();
       Serial.println(c);
@@ -82,8 +73,7 @@ if (!SerialBT.isClosed() && SerialBT.connected()){
       digitalWrite(14,0);
       Serial.println();
     }
-}
-  else
-    digitalWrite(27,0);
+  }
+
   delay(20);
 }
