@@ -30,8 +30,8 @@ disp('MATLAB: Đang chờ dữ liệu từ Python...');
 % Khởi tạo các cửa sổ hiện thị dữ liệu
 f1 = class_figures('góc nghiêng xe'); % Khởi tạo cửa sổ hiển thị góc nghiêng xe 
 f2 = class_figures('góc nghiêng ghế'); % Khởi tạo cửa sổ hiển thị góc nghiêng ghế
-f3 = class_figures('khoảng cách siêu âm'); % Khởi tạo cửa sổ hiển thị khoảng cách siêu âm
-f4 = class_figures('encoder nâng xe'); % Khởi tạo cửa sổ hiển thị encoder nâng xe
+%f3 = class_figures('khoảng cách siêu âm'); % Khởi tạo cửa sổ hiển thị khoảng cách siêu âm
+%f4 = class_figures('encoder nâng xe'); % Khởi tạo cửa sổ hiển thị encoder nâng xe
 f5 = class_figures('encoder nâng ghế'); % Khởi tạo cửa sổ hiện thị encoder nâng ghế
 % Đọc và hiển thị dữ liệu
 
@@ -46,8 +46,8 @@ while true
             %V1 = strtrim(matlab_struct.v1);
             D1 = matlab_struct.v1; % lấy dữ liệu góc nghiêng xe
             D2 = matlab_struct.v2; % lấy dữ liệu góc nghiêng ghế
-            D3 = matlab_struct.v3; % lấy dữ liệu khoảng cách siêu âm
-            %D3 = str2double(V3);
+            V3 = matlab_struct.v3; % lấy dữ liệu khoảng cách siêu âm
+            %D3 = str2num(V3);
             D4 = matlab_struct.v4; % lấy dữ liệu encoder nâng xe
             %D4 = str2num(V4);
             V5 = matlab_struct.v5; % lấy dữ liệu encoder nâng ghế
